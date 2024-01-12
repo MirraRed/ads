@@ -1,0 +1,21 @@
+<!-- ads/templates/ad/edit_advertisement.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Advertisement</title>
+</head>
+<body>
+    <h1>Edit Advertisement</h1>
+
+    <form method="POST" action="{% url 'edit_advertisement' ad.id %}">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Save Changes</button>
+    </form>
+
+    <a href="{% url 'get_ad_by_id' ad.id %}">Back to Advertisement Details</a>
+</body>
+</html>

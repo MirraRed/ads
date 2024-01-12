@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advertisement Details</title>
+</head>
+<body>
+    <h1>Advertisement Details</h1>
+
+    <div>
+        <h2>Title: {{ ad.title }}</h2>
+        <p>Content: {{ ad.content }}</p>
+        <p>Created Date: {{ ad.created_date }}</p>
+        <p>Updated Date: {{ ad.updated_date }}</p>
+        <p>Visibility: {{ ad.visibility }}</p>
+        <p>Author: {{ ad.user.username }}</p>
+        <p>Location: {{ ad.location.name_location }}</p>
+        <p>Category: {{ ad.category.name_category }}</p>
+    </div>
+</body>
+</html>

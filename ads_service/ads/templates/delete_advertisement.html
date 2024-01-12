@@ -1,0 +1,21 @@
+<!-- ads/templates/ad/delete_advertisement.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delete Advertisement</title>
+</head>
+<body>
+    <h1>Delete Advertisement</h1>
+    <p>Ви впевнені, що хочете видалити оголошення "{{ ad.title }}"?</p>
+
+    <form method="DELETE" action="{% url 'delete_advertisement' ad.id %}">
+        {% csrf_token %}
+        <button type="submit">Підтвердити видалення</button>
+    </form>
+
+    <a href="{% url 'get_all_ads' %}">Back to All Advertisements</a>
+</body>
+</html>
