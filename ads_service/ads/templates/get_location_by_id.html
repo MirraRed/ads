@@ -1,19 +1,17 @@
-<!-- ads/templates/location/get_location_by_id.html -->
-
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Location Details</title>
 </head>
 <body>
     <h1>Location Details</h1>
 
-    <p>Location Name: {{ location.location_name }}</p>
+    {% if location %}
+        <p>ID: {{ location.id }}</p>
+        <p>Name: {{ location.location_name }}</p>
+    {% else %}
+        <p>Location not found</p>
+    {% endif %}
 
-    <a href="{% url 'edit_location' location.id %}">Edit Location</a>
-    <a href="{% url 'delete_location' location.id %}">Delete Location</a>
-    <a href="{% url 'get_all_locations' %}">Back to All Locations</a>
 </body>
 </html>

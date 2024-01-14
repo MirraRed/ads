@@ -15,7 +15,7 @@ def register_user(request):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST, content_type='application/json')
     else:
         # GET request, display registration form
-        return render(request, 'ads/register_user.html', {'form': UserSerializer()})
+        return render(request, 'register_user.html', {'form': UserSerializer()})
 
 @api_view(['GET'])
 def get_user_by_id(request, userId):
@@ -25,9 +25,7 @@ def get_user_by_id(request, userId):
         return Response({"error": "Користувача не знайдено за вказаним id"}, status=status.HTTP_404_NOT_FOUND)
 
     serializer = UserSerializer(user)
-    if request.accepted_renderer.format == 'html':
-        return render(request, 'ads/user_detail.html', {'user': user})
-    return Response(serializer.data, status=status.HTTP_200_OK, content_type='application/json')
+    return render(request, 'user_detail.html', {'user': serializer.data}, content_type='text/html')
 
 @api_view(['PUT'])
 def update_user_by_id(request, userId):
@@ -46,12 +44,17 @@ def update_user_by_id(request, userId):
     serializer = UserSerializer(user)
     return render(request, 'user/user_update.html', {'user': user, 'serializer': serializer})
 
+
 @api_view(['GET', 'DELETE'])
 def delete_user_by_id(request, userId):
     if request.method == 'GET':
-        # Отримуємо список всіх користувачів
-        users = User.objects.all()
-        return render(request, 'ads/delete_user.html', {'users': users})
+        try:
+            user = User.objects.get(id=userId)
+        except User.DoesNotExist:
+            return Response({"error": "Користувача не знайдено за вказаним id"}, status=status.HTTP_404_NOT_FOUND)
+
+        return render(request, 'delete_user.html', {'user': user})
+
     elif request.method == 'DELETE':
         try:
             user = User.objects.get(id=userId)
@@ -78,10 +81,7 @@ def get_all_ads(request):
         'visibility': visibility,
     }
 
-    if request.accepted_renderer.format == 'html':
-        return render(request, 'ads/get_all_ads.html', context)
-
-    return Response(serializer.data, status=status.HTTP_200_OK, content_type='application/json')
+    return render(request, 'get_all_ads.html', context)
 
 @api_view(['GET', 'POST'])
 def create_ad(request):
@@ -94,7 +94,7 @@ def create_ad(request):
     else:
         locations = Location.objects.all()
         users = User.objects.all()
-        return render(request, 'ads/create_ad.html', {'locations': locations, 'users': users})
+        return render(request, 'create_ad.html', {'locations': locations, 'users': users})
 
 @api_view(['GET'])
 def get_ad_by_id(request, adId):
@@ -103,14 +103,10 @@ def get_ad_by_id(request, adId):
     except Advertisement.DoesNotExist:
         return Response({"error": "Оголошення не знайдено"}, status=status.HTTP_404_NOT_FOUND)
 
-    if request.accepted_renderer.format == 'html':
-        return render(request, 'ads/get_ad_by_id.html', {'ad': ad})
-
-    serializer = AdSerializer(ad)
-    return Response(serializer.data)
+    return render(request, 'get_ad_by_id.html', {'ad': ad})
 
 
-@api_view(['PUT'])
+@api_view(['GET', 'PUT'])
 def edit_advertisement(request, adId):
     try:
         ad = Advertisement.objects.get(id=adId)
@@ -124,9 +120,9 @@ def edit_advertisement(request, adId):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     else:
-        return render(request, 'ads/edit_advertisement.html', {'ad': ad})
+        return render(request, 'edit_advertisement.html', {'ad': ad})
 
-@api_view(['DELETE'])
+@api_view(['GET', 'DELETE'])
 def delete_advertisement(request, adId):
     try:
         ad = Advertisement.objects.get(id=adId)
@@ -137,9 +133,9 @@ def delete_advertisement(request, adId):
         ad.delete()
         return Response({"message": "Оголошення успішно видалено"}, status=status.HTTP_200_OK)
     else:
-        return render(request, 'ads/delete_advertisement.html', {'ad': ad})
+        return render(request, 'delete_advertisement.html', {'ad': ad})
 
-@api_view(['POST'])
+@api_view(['GET', 'POST'])
 def create_location(request):
     if request.method == 'POST':
         serializer = LocationSerializer(data=request.data)
@@ -149,17 +145,14 @@ def create_location(request):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     else:
-        return render(request, 'ads/create_location.html')
+        return render(request, 'create_location.html')
 
 @api_view(['GET'])
 def get_all_locations(request):
     locations = Location.objects.all()
     serializer = LocationSerializer(locations, many=True)
 
-    if request.accepted_renderer.format == 'html':
-        return render(request, 'ads/get_all_locations.html', {'locations': serializer.data})
-
-    return Response(serializer.data, status=status.HTTP_200_OK)
+    return render(request, 'get_all_locations.html', {'locations': serializer.data})
 
 @api_view(['GET'])
 def get_location_by_id(request, locationId):
@@ -168,27 +161,25 @@ def get_location_by_id(request, locationId):
     except Location.DoesNotExist:
         return Response({"error": "Локація не знайдена за данною id адресою"}, status=status.HTTP_404_NOT_FOUND)
 
-    if request.accepted_renderer.format == 'html':
-        return render(request, 'ads/get_location_by_id.html', {'location': location})
+    return render(request, 'get_location_by_id.html', {'location': location})
 
-    serializer = LocationSerializer(location)
-    return Response(serializer.data, status=status.HTTP_200_OK)
-
-@api_view(['PUT'])
+@api_view(['GET', 'PUT'])
 def update_location_by_id(request, locationId):
     try:
         location = Location.objects.get(id=locationId)
     except Location.DoesNotExist:
         return Response({"error": "Локація не знайдена за данною id адресою"}, status=status.HTTP_404_NOT_FOUND)
 
-    serializer = LocationSerializer(location, data=request.data)
-    if serializer.is_valid():
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_200_OK)
+    if request.method == 'PUT':
+        serializer = LocationSerializer(location, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    elif request.method == 'GET':
+        return render(request, 'edit_location.html', {'location': location})
 
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-@api_view(['DELETE'])
+@api_view(['GET', 'DELETE'])
 def delete_location_by_id(request, locationId):
     try:
         location = Location.objects.get(id=locationId)
@@ -198,5 +189,5 @@ def delete_location_by_id(request, locationId):
     if request.method == 'DELETE':
         location.delete()
         return Response({"message": "Локація успішно видалена"}, status=status.HTTP_200_OK)
-    else:
-        return render(request, 'ads/delete_location.html', {'location': location})
+    elif request.method == 'GET':
+        return render(request, 'delete_location.html', {'location': location})

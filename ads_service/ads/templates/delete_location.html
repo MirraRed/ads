@@ -11,9 +11,10 @@
     <h1>Delete Location</h1>
     <p>Ви впевнені, що хочете видалити локацію "{{ location.location_name }}"?</p>
 
-    <form method="DELETE" action="{% url 'delete_location' location.id %}">
-        {% csrf_token %}
-        <button type="submit">Підтвердити видалення</button>
+    <form method="POST" action="{% url 'delete_location_by_id' location.id %}">
+            {% csrf_token %}
+            <input type="hidden" name="_method" value="DELETE">
+            <button type="submit">Delete Location</button>
     </form>
 
     <a href="{% url 'get_all_locations' %}">Back to All Locations</a>

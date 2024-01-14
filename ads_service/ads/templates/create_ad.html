@@ -1,17 +1,16 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Advertisement</title>
+    <title>Create Ad</title>
 </head>
 <body>
-    <h1>Create Advertisement</h1>
+    <h1>Create Ad</h1>
 
-    <form method="post" action="{% url 'create_ad' %}">
+    <form method="POST" action="{% url 'create_ad' %}">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit">Created</button>
+        <button type="submit">Create</button>
     </form>
+
 </body>
 </html>
